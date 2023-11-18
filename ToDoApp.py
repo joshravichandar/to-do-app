@@ -1,6 +1,13 @@
 # Create a ToDo App that connects to MySql - create new items, delete items
 from tkinter import *
 from tkinter import ttk as tk
+import mysql.connector
+from mysql.connector import errorcode
+
+# ADD BACK PASSWORD
+cnx = mysql.connector.connect(user='ravichanj', password='', host='localhost', database='todoapp_db')
+cursor = cnx.cursor()
+print(cnx)
 
 TO_DO_ITEMS = []
 
@@ -13,8 +20,14 @@ def add_press():
     if (item != ""):
         TO_DO_ITEMS.append(item)
         to_do_list.insert(len(TO_DO_ITEMS), item)
+        add = ("INSERT INTO todo_list (item) "+"VALUES ('"+item+"');")
+        cursor.execute(add)
+        cnx.commit()
         new_item.set("")
-        
+
+        # WHERE DO WE CLOSE THIS STUFF
+        cursor.close()
+        cnx.close()
 
 def delete_press():
     pass
