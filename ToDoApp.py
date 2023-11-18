@@ -27,7 +27,6 @@ def down_press():
 
 
 
-
 if __name__ == '__main__':
     root = Tk()
     root.title("To Do Application")
@@ -36,13 +35,10 @@ if __name__ == '__main__':
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
     
-
     # create list and add to grid
     to_do_list = Listbox(main_frame, width=20)
     to_do_list.grid(column=0, row=0,rowspan=5 ,pady=5)
     
-    
-
     # create var for entering new item, text field, add to grid
     new_item = StringVar(value=TO_DO_ITEMS)
     enter_item = tk.Entry(main_frame, width=20, textvariable=new_item, justify=CENTER)
