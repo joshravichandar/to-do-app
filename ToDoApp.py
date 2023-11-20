@@ -1,11 +1,12 @@
 # Create a ToDo App that connects to MySql - create new items, delete items
 from tkinter import *
 from tkinter import ttk as tk
+from tkinter import messagebox
 import mysql.connector
 from mysql.connector import errorcode
 
 # ADD BACK PASSWORD
-cnx = mysql.connector.connect(user='ravichanj', password='', host='localhost', database='todoapp_db')
+cnx = mysql.connector.connect(user='admin', password='password', host='localhost', database='todoapp_db')
 cursor = cnx.cursor()
 print(cnx)
 
@@ -20,8 +21,8 @@ def add_press():
     if (item != ""):
         TO_DO_ITEMS.append(item)
         to_do_list.insert(len(TO_DO_ITEMS), item)
-        add = ("INSERT INTO todo_list (item) "+"VALUES ('"+item+"');")
-        cursor.execute(add)
+        add_from_db = ("INSERT INTO todo_list (item) "+"VALUES ('"+item+"');")
+        cursor.execute(add_from_db)
         cnx.commit()
         new_item.set("")
 
@@ -30,15 +31,17 @@ def add_press():
         cnx.close()
 
 def delete_press():
-    pass
+    # get selected item
+    item = to_do_list.get(to_do_list.curselection())
+    delete_from_db = ("DELETE FROM todo_list WHERE item= '"+item+"';")
+    cursor.execute(delete_from_db)
+    cnx.commit()
 
-def up_press():
-    pass
-
-def down_press():
-    pass
-
-
+def on_close():
+    if messagebox.askokcancel("QUIT", "Do you want to quit?"):
+        cursor.close()
+        cnx.close()
+        root.destroy()
 
 if __name__ == '__main__':
     root = Tk()
@@ -63,4 +66,6 @@ if __name__ == '__main__':
     up = tk.Button(main_frame, text="Up").grid(column=1, row=0)
     down = tk.Button(main_frame, text="Down").grid(column=1, row=1)
 
+    # handle closing
+    root.protocol("DELETE_WINDOW", on_close)
     root.mainloop()
