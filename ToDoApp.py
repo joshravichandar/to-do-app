@@ -3,10 +3,10 @@ from tkinter import *
 from tkinter import ttk as tk
 from tkinter import messagebox
 import mysql.connector
-from mysql.connector import errorcode
 
-# ADD BACK PASSWORD
-cnx = mysql.connector.connect(user='admin', password='password', host='localhost', database='todoapp_db')
+
+# connect to db using these credentials
+cnx = mysql.connector.connect(user='ravichanj', password='jravi123', host='localhost', database='todoapp_db')
 cursor = cnx.cursor()
 print(cnx)
 
@@ -26,9 +26,6 @@ def add_press():
         cnx.commit()
         new_item.set("")
 
-        # WHERE DO WE CLOSE THIS STUFF
-        cursor.close()
-        cnx.close()
 
 def delete_press():
     # get selected item
@@ -38,10 +35,31 @@ def delete_press():
     cnx.commit()
 
 def on_close():
+    db_to_list()
     if messagebox.askokcancel("QUIT", "Do you want to quit?"):
         cursor.close()
         cnx.close()
         root.destroy()
+
+
+# set db into list
+def db_to_list():
+    all_items = ("SELECT * FROM TODO_LIST;")
+    cursor.execute(all_items)
+    records = cursor.fetchall()
+    for i in records:
+        #parsed = (i[2:len(i)-3])
+        #print(parsed)
+        print(i)
+        TO_DO_ITEMS.append(i)
+
+    # some print with {} - FIX THIS!
+    to_do_set = set(TO_DO_ITEMS)
+    for j in to_do_set:
+        to_do_list.insert(END, j)
+    
+    print(TO_DO_ITEMS)
+    return(to_do_set)
 
 if __name__ == '__main__':
     root = Tk()
@@ -62,10 +80,9 @@ if __name__ == '__main__':
 
     # create all buttons and add to grid
     add = tk.Button(main_frame,width=20 ,text="Add Item",command=add_press).grid(column=0, row=7)
-    delete = tk.Button(main_frame, text="Delete").grid(column=1, row=3)
-    up = tk.Button(main_frame, text="Up").grid(column=1, row=0)
-    down = tk.Button(main_frame, text="Down").grid(column=1, row=1)
+    delete = tk.Button(main_frame,width=20, text="Delete").grid(column=0, row=8)
+    db_to_list()
 
-    # handle closing
-    root.protocol("DELETE_WINDOW", on_close)
+    # handle closing - > call on_close
+    #root.protocol("WM_DELETE_WINDOW", on_close())
     root.mainloop()
