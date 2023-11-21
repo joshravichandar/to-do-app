@@ -6,7 +6,7 @@ import mysql.connector
 
 
 # connect to db using these credentials
-cnx = mysql.connector.connect(user='ravichanj', password='jravi123', host='localhost', database='todoapp_db')
+cnx = mysql.connector.connect(user='admin', password='password', host='localhost', database='todoapp_db')
 cursor = cnx.cursor()
 print(cnx)
 
