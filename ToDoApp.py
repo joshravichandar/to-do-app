@@ -19,19 +19,21 @@ def add_press():
     item = new_item.get()
     # append to list first, append from list to listbox, reset to empty
     if (item != ""):
-        TO_DO_ITEMS.append(item)
-        to_do_list.insert(len(TO_DO_ITEMS), item)
-        add_from_db = ("INSERT INTO todo_list (item) "+"VALUES ('"+item+"');")
-        cursor.execute(add_from_db)
+        #TO_DO_ITEMS.append(item)
+        #to_do_list.insert(len(TO_DO_ITEMS), item)
+        add_to_db = ("INSERT INTO todo_list (item) "+"VALUES ('"+item+"');")
+        cursor.execute(add_to_db)
+        
         cnx.commit()
         new_item.set("")
-
+        db_to_list()
 
 def delete_press():
-    # get selected item
+    # get selected item - string
     item = to_do_list.get(to_do_list.curselection())
-    delete_from_db = ("DELETE FROM todo_list WHERE item= '"+item+"';")
-    cursor.execute(delete_from_db)
+    print(type(item))
+    delete_from_db = ("DELETE FROM todo_list WHERE item= %s;")
+    cursor.execute(delete_from_db, (item,))
     cnx.commit()
 
 def on_close():
@@ -50,16 +52,19 @@ def db_to_list():
     for i in records:
         #parsed = (i[2:len(i)-3])
         #print(parsed)
-        print(i)
-        TO_DO_ITEMS.append(i)
+        #print("i = ", i)
+        TO_DO_ITEMS.append(i[0])
+        #pass
 
     # some print with {} - FIX THIS!
     to_do_set = set(TO_DO_ITEMS)
     for j in to_do_set:
-        to_do_list.insert(END, j)
+        #TO_DO_ITEMS.append(j)
+        to_do_list.insert(len(TO_DO_ITEMS), j)
+        print("j = " + j)
     
     print(TO_DO_ITEMS)
-    return(to_do_set)
+    #return(to_do_set)
 
 if __name__ == '__main__':
     root = Tk()
@@ -80,9 +85,15 @@ if __name__ == '__main__':
 
     # create all buttons and add to grid
     add = tk.Button(main_frame,width=20 ,text="Add Item",command=add_press).grid(column=0, row=7)
-    delete = tk.Button(main_frame,width=20, text="Delete").grid(column=0, row=8)
+    delete = tk.Button(main_frame,width=20, text="Delete",command=delete_press).grid(column=0, row=8)
     db_to_list()
 
     # handle closing - > call on_close
     #root.protocol("WM_DELETE_WINDOW", on_close())
     root.mainloop()
+
+
+
+# Trying to fix add and delete - currently working on add
+# ATTEMPTED WORKFLOW: add press -> add to db -> add to list -> add to listbox GUI
+# currently it goes: add press -> add to db -> reprint everything into gui???????
