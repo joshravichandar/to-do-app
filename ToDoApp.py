@@ -19,14 +19,12 @@ def add_press():
     item = new_item.get()
     # append to list first, append from list to listbox, reset to empty
     if (item != ""):
-        #TO_DO_ITEMS.append(item)
-        #to_do_list.insert(len(TO_DO_ITEMS), item)
+        TO_DO_ITEMS.append(item)
+        to_do_list.insert(len(TO_DO_ITEMS), item)
         add_to_db = ("INSERT INTO todo_list (item) "+"VALUES ('"+item+"');")
         cursor.execute(add_to_db)
-        
         cnx.commit()
         new_item.set("")
-        db_to_list()
 
 def delete_press():
     # get selected item - string
@@ -35,6 +33,10 @@ def delete_press():
     delete_from_db = ("DELETE FROM todo_list WHERE item= %s;")
     cursor.execute(delete_from_db, (item,))
     cnx.commit()
+    TO_DO_ITEMS.remove(item)
+    index = to_do_list.get(0, END).index(item)
+    to_do_list.delete(index)
+    
 
 def on_close():
     db_to_list()
